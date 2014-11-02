@@ -20,7 +20,7 @@ function preload() {
     queue.installPlugin(createjs.Sound);
     queue.addEventListener("complete", init);
     queue.loadManifest([
-        { id: "plane", src: "images/plane.png" },
+        { id: "plane", src: "images/island.png" },
         { id: "island", src: "images/island.png" },
         { id: "cloud", src: "images/cloud.png" },
         { id: "ocean", src: "images/ocean.gif" },
@@ -62,7 +62,7 @@ var Plane = (function () {
         this.height = this.image.getBounds().height;
         this.image.regX = this.width * 0.5;
         this.image.regY = this.height * 0.5;
-        this.image.x = 430;
+        this.image.x = 420;
 
         stage.addChild(this.image);
     }
