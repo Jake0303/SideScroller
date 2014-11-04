@@ -187,16 +187,21 @@ class Asteroid {
     }
 
     reset() {
-        //this.image.y = -this.height;
-        this.image.x = Math.floor(Math.random() * stage.canvas.width);
-        //this.dy = Math.floor(Math.random() * 2 - 4);
+        this.image.x = stage.canvas.width + this.image.getBounds().width;
+        this.image.y = Math.floor(Math.random() * stage.canvas.height);
+        this.dy = Math.floor(Math.random() * 2 - 1);
         this.dx = Math.floor(Math.random() * 5 + 5);
     }
 
     update() {
-        //this.image.y += this.dy;
+        if (this.image.y < stage.canvas.height / 2) {
+            this.image.y += this.dy;
+        }
+        else {
+            this.image.y -= this.dy;
+        }
         this.image.x -= this.dx;
-        if (this.image.x > (this.width + stage.canvas.width)) {
+        if (this.image.x <= 0) {
             this.reset();
         }
 
@@ -300,22 +305,22 @@ function distance(point1: createjs.Point, point2: createjs.Point): number {
 }
 */
 // Check Collision with Plane and Cloud
-function planeAndCloud(aAsteroid: Asteroid) {
+function checkasteroid(aAsteroid: Asteroid) {
     var p1: createjs.Point = new createjs.Point();
     var p2: createjs.Point = new createjs.Point();
-    var asteroid: Asteroid = new Asteroid();
+    //var asteroid: Asteroid = new Asteroid();
 
-    asteroid = aAsteroid;
+    //asteroid = aAsteroid;
 
     p1.x = spaceship.image.x;
     p1.y = spaceship.image.y;
-    p2.x = asteroid.image.x;
-    p2.y = asteroid.image.y;
+    p2.x = aAsteroid.image.x;
+    p2.y = aAsteroid.image.y;
 
-    if (distance(p1, p2) <= ((spaceship.height * 0.5) + (asteroid.height * 0.5))) {
-        createjs.Sound.play("thunder");
+    if (distance(p1, p2) <= ((spaceship.height * 0.5) + (aAsteroid.height * 0.5))) {
+        //createjs.Sound.play("thunder");
         scoreboard.lives -= 1;
-        asteroid.reset();
+        aAsteroid.reset();
     }
 }
 
@@ -323,7 +328,9 @@ function collisionCheck() {
     //planeAndIsland();
 
     for (var count = 0; count < ASTEROID_NUM; count++) {
-        planeAndCloud(asteroids[count]);
+        if (asteroids[count].image.x < 300) {
+            checkasteroid(asteroids[count]);
+        }
     }
 }
 
@@ -332,7 +339,8 @@ function gameStart(): void {
     spaceship = new SpaceShip();
 
     for (var count = 0; count < ASTEROID_NUM; count++) {
-     asteroids[count] = new Asteroid();
+        asteroids[count] = new Asteroid();
+        
     }
 
     scoreboard = new Scoreboard();
