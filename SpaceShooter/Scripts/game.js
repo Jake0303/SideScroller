@@ -7,11 +7,11 @@ var space;
 var spaceship;
 
 //var island: Island;
-//var clouds = [];
+var asteroids = [];
 var scoreboard;
 
 // game constants
-var CLOUD_NUM = 3;
+var ASTEROID_NUM = 3;
 var PLAYER_LIVES = 3;
 var GAME_FONT = "40px Consolas";
 var FONT_COLOUR = "#FFFF00";
@@ -30,7 +30,9 @@ function preload() {
         { id: "thrusteranim3", src: "images/Thrusteranim3.png" },
         { id: "shoot", src: "images/lasershot.png" },
         { id: "island", src: "images/island.png" },
-        { id: "cloud", src: "images/cloud.png" },
+        { id: "asteroid1", src: "images/asteroid1.png" },
+        { id: "asteroid2", src: "images/asteroid2.png" },
+        { id: "asteroid3", src: "images/asteroid3.png" },
         { id: "space", src: "images/spacebackground.png" },
         { id: "yay", src: "sounds/yay.ogg" },
         { id: "thunder", src: "sounds/thunder.ogg" }
@@ -51,10 +53,12 @@ function gameLoop(event) {
     space.update();
     spaceship.update();
 
-    //for (var count = 0; count < CLOUD_NUM; count++) {
-    //clouds[count].update();
-    //}
-    //collisionCheck();
+    for (var count = 0; count < ASTEROID_NUM; count++) {
+        asteroids[count].update();
+    }
+
+    collisionCheck();
+
     scoreboard.update();
 
     stage.update();
@@ -153,9 +157,9 @@ var Island = (function () {
 })();
 
 // Island Class
-var Cloud = (function () {
-    function Cloud() {
-        this.image = new createjs.Bitmap(queue.getResult("cloud"));
+var Asteroid = (function () {
+    function Asteroid() {
+        this.image = new createjs.Bitmap(queue.getResult("asteroid1"));
         this.width = this.image.getBounds().width;
         this.height = this.image.getBounds().height;
         this.image.regX = this.width * 0.5;
@@ -164,21 +168,22 @@ var Cloud = (function () {
         stage.addChild(this.image);
         this.reset();
     }
-    Cloud.prototype.reset = function () {
-        this.image.y = -this.height;
+    Asteroid.prototype.reset = function () {
+        //this.image.y = -this.height;
         this.image.x = Math.floor(Math.random() * stage.canvas.width);
-        this.dy = Math.floor(Math.random() * 5 + 5);
-        this.dx = Math.floor(Math.random() * 4 - 2);
+
+        //this.dy = Math.floor(Math.random() * 2 - 4);
+        this.dx = Math.floor(Math.random() * 5 + 5);
     };
 
-    Cloud.prototype.update = function () {
-        this.image.y += this.dy;
-        this.image.x += this.dx;
-        if (this.image.y > (this.height + stage.canvas.height)) {
+    Asteroid.prototype.update = function () {
+        //this.image.y += this.dy;
+        this.image.x -= this.dx;
+        if (this.image.x > (this.width + stage.canvas.width)) {
             this.reset();
         }
     };
-    return Cloud;
+    return Asteroid;
 })();
 
 /*
@@ -266,36 +271,41 @@ scoreboard.score += 100;
 island.reset();
 }
 }
-// Check Collision with Plane and Cloud
-function planeAndCloud(theCloud: Cloud) {
-var p1: createjs.Point = new createjs.Point();
-var p2: createjs.Point = new createjs.Point();
-var cloud: Cloud = new Cloud();
-cloud = theCloud;
-p1.x = spaceship.image.x;
-p1.y = spaceship.image.y;
-p2.x = cloud.image.x;
-p2.y = cloud.image.y;
-if (distance(p1, p2) <= ((spaceship.height * 0.5) + (cloud.height * 0.5))) {
-createjs.Sound.play("thunder");
-scoreboard.lives -= 1;
-cloud.reset();
-}
-}
-function collisionCheck() {
-planeAndIsland();
-for (var count = 0; count < CLOUD_NUM; count++) {
-planeAndCloud(clouds[count]);
-}
-}
 */
+// Check Collision with Plane and Cloud
+function planeAndCloud(aAsteroid) {
+    var p1 = new createjs.Point();
+    var p2 = new createjs.Point();
+    var asteroid = new Asteroid();
+
+    asteroid = aAsteroid;
+
+    p1.x = spaceship.image.x;
+    p1.y = spaceship.image.y;
+    p2.x = asteroid.image.x;
+    p2.y = asteroid.image.y;
+
+    if (distance(p1, p2) <= ((spaceship.height * 0.5) + (asteroid.height * 0.5))) {
+        createjs.Sound.play("thunder");
+        scoreboard.lives -= 1;
+        asteroid.reset();
+    }
+}
+
+function collisionCheck() {
+    for (var count = 0; count < ASTEROID_NUM; count++) {
+        planeAndCloud(asteroids[count]);
+    }
+}
+
 function gameStart() {
     space = new SpaceBackground();
     spaceship = new SpaceShip();
 
-    //for (var count = 0; count < CLOUD_NUM; count++) {
-    //  clouds[count] = new Cloud();
-    //}
+    for (var count = 0; count < ASTEROID_NUM; count++) {
+        asteroids[count] = new Asteroid();
+    }
+
     scoreboard = new Scoreboard();
 }
 //# sourceMappingURL=game.js.map
