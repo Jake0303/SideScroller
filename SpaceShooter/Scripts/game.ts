@@ -1,19 +1,19 @@
 ﻿var stage: createjs.Stage;
 var queue;
-
+var hasShot: boolean = false;
 // game objects
-var plane: Plane;
-var island: Island;
-var clouds = [];
-var ocean: Ocean;
+var space: SpaceBackground;
+var spaceship: SpaceShip;
+//var island: Island;
+//var clouds = [];
 var scoreboard: Scoreboard;
-
 // game constants
 var CLOUD_NUM: number = 3;
 var PLAYER_LIVES: number = 3;
 var GAME_FONT = "40px Consolas";
 var FONT_COLOUR = "#FFFF00";
-
+var Y_OFFSET = 15;
+var LASER_SPEED = 20;
 
 
 // Preload function
@@ -22,10 +22,14 @@ function preload(): void {
     queue.installPlugin(createjs.Sound);
     queue.addEventListener("complete", init);
     queue.loadManifest([
-        { id: "plane", src: "images/island.png" },
+        { id: "spaceship", src: "images/Spaceship.png" },
+        { id: "thrusteranim1", src: "images/Thrusteranim1.png" },
+        { id: "thrusteranim2", src: "images/Thrusteranim2.png" },
+        { id: "thrusteranim3", src: "images/Thrusteranim3.png" },
+        { id: "shoot", src: "images/lasershot.png" },
         { id: "island", src: "images/island.png" },
         { id: "cloud", src: "images/cloud.png" },
-        { id: "ocean", src: "images/ocean.gif" },
+        { id: "space", src: "images/spacebackground.png" },
         { id: "yay", src: "sounds/yay.ogg" },
         { id: "thunder", src: "sounds/thunder.ogg" }
     ]);
@@ -34,46 +38,100 @@ function preload(): void {
 function init(): void {
     stage = new createjs.Stage(document.getElementById("canvas"));
     stage.enableMouseOver(20);
+
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", gameLoop);
     gameStart();
+
 }
 
 // Game Loop
 function gameLoop(event): void {
-    ocean.update();
-    island.update();
-    plane.update();
 
-    for (var count = 0; count < CLOUD_NUM; count++) {
-        clouds[count].update();
-    }
+    space.update();
+    spaceship.update();
 
-    collisionCheck();
+    //for (var count = 0; count < CLOUD_NUM; count++) {
+    //clouds[count].update();
+    //}
+
+    //collisionCheck();
 
     scoreboard.update();
 
     stage.update();
 }
 
-// Plane Class
-class Plane {
+/*
+ * SpaceShip Class, the player controls this spaceship
+ */
+class SpaceShip {
     image: createjs.Bitmap;
+    thrusterAnimImage: createjs.Bitmap;
+    laserShot: createjs.Bitmap;
     width: number;
     height: number;
+    animTimer: number = 0;
+    laserCounter: number = 0;
     constructor() {
-        this.image = new createjs.Bitmap(queue.getResult("plane"));
+        this.thrusterAnimImage = new createjs.Bitmap(queue.getResult("thrusteranim1"));
+        this.image = new createjs.Bitmap(queue.getResult("spaceship"));
         this.width = this.image.getBounds().width;
         this.height = this.image.getBounds().height;
         this.image.regX = this.width * 0.5;
         this.image.regY = this.height * 0.5;
-        this.image.x = 420;
-
+        this.image.x = 60;
+        this.thrusterAnimImage.x = 11;
         stage.addChild(this.image);
-    }
+        stage.on("click", this.shootLaser, this);
 
+    }
+    shootLaser() {
+        this.laserCounter++;
+        if (event.button == 0)
+            {
+            if (!hasShot) {
+                this.laserShot = new createjs.Bitmap(queue.getResult("shoot"));
+                this.laserShot = new createjs.Bitmap(queue.getResult("shoot"));
+                this.laserShot.y = stage.mouseY - Y_OFFSET;
+                this.laserShot.x = this.image.x + Y_OFFSET;
+
+                stage.addChild(this.laserShot);
+                stage.update();
+                hasShot = true;
+            }
+        }
+    }
     update() {
+        if (hasShot) {
+            this.laserShot.x += LASER_SPEED;
+            if (this.laserShot.x > 600) {
+                stage.removeChild(this.laserShot);
+                hasShot = false;
+            }
+        }
+        this.animTimer += 1;
+        if (this.animTimer % 2 == 0) {
+            stage.removeChild(this.thrusterAnimImage);
+            this.thrusterAnimImage = new createjs.Bitmap(queue.getResult("thrusteranim1"));
+            this.thrusterAnimImage.x = 11;
+            stage.addChild(this.thrusterAnimImage);
+        }
+        else if (this.animTimer % 3 == 0) {
+            stage.removeChild(this.thrusterAnimImage);
+            this.thrusterAnimImage = new createjs.Bitmap(queue.getResult("thrusteranim2")); this.thrusterAnimImage.x = this.image.x + this.thrusterAnimImage.getBounds().x;
+            this.thrusterAnimImage.x = 11;
+            stage.addChild(this.thrusterAnimImage);
+            this.animTimer = 0;
+        }
+        else {
+            stage.removeChild(this.thrusterAnimImage);
+            this.thrusterAnimImage = new createjs.Bitmap(queue.getResult("thrusteranim3"));
+            this.thrusterAnimImage.x = 11;
+            stage.addChild(this.thrusterAnimImage);
+        }
         this.image.y = stage.mouseY;
+        this.thrusterAnimImage.y = this.image.y - 18;
     }
 }
 
@@ -104,7 +162,7 @@ class Island {
         if (this.image.y > (this.height + stage.canvas.height)) {
             this.reset();
         }
-       
+
     }
 }
 
@@ -143,28 +201,30 @@ class Cloud {
     }
 }
 
-// Ocean Class
-class Ocean {
+/*
+ * Space Background class, background image in our game.
+ */
+class SpaceBackground {
     image: createjs.Bitmap;
     width: number;
     height: number;
-    dy: number;
+    dx: number;
     constructor() {
-        this.image = new createjs.Bitmap(queue.getResult("ocean"));
+        this.image = new createjs.Bitmap(queue.getResult("space"));
         this.width = this.image.getBounds().width;
         this.height = this.image.getBounds().height;
-        this.dy = 5;
+        this.dx = 5;
         stage.addChild(this.image);
         this.reset();
     }
 
     reset() {
-        this.image.y = -this.height + stage.canvas.height;
+        this.image.x = -this.width + stage.canvas.width;
     }
 
     update() {
-        this.image.y += this.dy;
-        if (this.image.y >= 0) {
+        this.image.x += this.dx;
+        if (this.image.x >= 0) {
             this.reset();
         }
 
@@ -189,12 +249,12 @@ class Scoreboard {
     }
 
     update() {
-        this.labelString = "Lives: " + this.lives.toString() + " Score: " + this.score.toString(); 
+        this.labelString = "Lives: " + this.lives.toString() + " Score: " + this.score.toString();
         this.label.text = this.labelString;
     }
 }
 
-function distance(point1: createjs.Point, point2: createjs.Point):number {
+function distance(point1: createjs.Point, point2: createjs.Point): number {
     var p1: createjs.Point;
     var p2: createjs.Point;
     var theXs: number;
@@ -221,16 +281,16 @@ function distance(point1: createjs.Point, point2: createjs.Point):number {
 }
 
 // Check Collision with Plane and Island
-function planeAndIsland() {
+/*function planeAndIsland() {
     var p1: createjs.Point = new createjs.Point();
     var p2: createjs.Point = new createjs.Point();
 
-    p1.x = plane.image.x;
-    p1.y = plane.image.y;
+    p1.x = spaceship.image.x;
+    p1.y = spaceship.image.y;
     p2.x = island.image.x;
     p2.y = island.image.y;
 
-    if (distance(p1, p2) <= ((plane.height * 0.5) + (island.height * 0.5))) {
+    if (distance(p1, p2) <= ((spaceship.height * 0.5) + (island.height * 0.5))) {
         createjs.Sound.play("yay");
         scoreboard.score += 100;
         island.reset();
@@ -245,12 +305,12 @@ function planeAndCloud(theCloud: Cloud) {
 
     cloud = theCloud;
 
-    p1.x = plane.image.x;
-    p1.y = plane.image.y;
+    p1.x = spaceship.image.x;
+    p1.y = spaceship.image.y;
     p2.x = cloud.image.x;
     p2.y = cloud.image.y;
 
-    if (distance(p1, p2) <= ((plane.height * 0.5) + (cloud.height * 0.5))) {
+    if (distance(p1, p2) <= ((spaceship.height * 0.5) + (cloud.height * 0.5))) {
         createjs.Sound.play("thunder");
         scoreboard.lives -= 1;
         cloud.reset();
@@ -264,15 +324,14 @@ function collisionCheck() {
         planeAndCloud(clouds[count]);
     }
 }
-
+*/
 function gameStart(): void {
-    ocean = new Ocean();
-    island = new Island();
-    plane = new Plane();
+    space = new SpaceBackground();
+    spaceship = new SpaceShip();
 
-    for (var count = 0; count < CLOUD_NUM; count++) {
-        clouds[count] = new Cloud();
-    }
+    //for (var count = 0; count < CLOUD_NUM; count++) {
+    //  clouds[count] = new Cloud();
+    //}
 
-    scoreboard = new Scoreboard(); 
+    scoreboard = new Scoreboard();
 }
