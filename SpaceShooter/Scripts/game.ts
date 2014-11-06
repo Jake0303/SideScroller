@@ -92,12 +92,12 @@ class SpaceShip {
         stage.addChild(this.image);
         stage.on("click", function () {
 
-                laser[laserCounter] = new LaserShot();
-                laser[laserCounter].shootLaser();
-                laserCounter++;
-                if (laserCounter >= LASER_NUM) {
-                    laserCounter = 0;
-                }
+            laser[laserCounter] = new LaserShot();
+            laser[laserCounter].shootLaser();
+            laserCounter++;
+            if (laserCounter >= LASER_NUM) {
+                laserCounter = 0;
+            }
         }, this);
 
     }
@@ -141,21 +141,21 @@ class LaserShot {
         if (event.button == 0) {
             //if (!hasShot) {
 
-                this.laserBeam.y = stage.mouseY - Y_OFFSET;
-                this.laserBeam.x = spaceship.image.x + Y_OFFSET;
+            this.laserBeam.y = stage.mouseY - Y_OFFSET;
+            this.laserBeam.x = spaceship.image.x + Y_OFFSET;
 
-                stage.addChild(this.laserBeam);
-                stage.update();
-                //hasShot = true;
-           // }
+            stage.addChild(this.laserBeam);
+            stage.update();
+            //hasShot = true;
+            // }
         }
     }
     update() {
         //if (hasShot) {
-            this.laserBeam.x += LASER_SPEED;
-            if (this.laserBeam.x > 600) {
-                stage.removeChild(this.laserBeam);
-                //hasShot = false;
+        this.laserBeam.x += LASER_SPEED;
+        if (this.laserBeam.x > 600) {
+            stage.removeChild(this.laserBeam);
+            //hasShot = false;
             //}
         }
     }
@@ -218,15 +218,13 @@ class Asteroid {
 
     reset(randNum: number) {
         stage.removeChild(this.image);
-        if (randNum == 1)
-        {
+        if (randNum == 1) {
             this.image = new createjs.Bitmap(queue.getResult("asteroid1"));
-            this.image.rotation += Math.floor((Math.random() * 3) + 1);
+            //this.image.rotation += Math.floor((Math.random() * 3) + 1);
         }
-        else if (randNum == 2)
-        {
+        else if (randNum == 2) {
             this.image = new createjs.Bitmap(queue.getResult("asteroid2"));
-            this.image.rotation -= Math.floor((Math.random() * 3) + 1);
+            //this.image.rotation -= Math.floor((Math.random() * 3) + 1);
         }
         else if (randNum == 3)
             this.image = new createjs.Bitmap(queue.getResult("asteroid3"));
@@ -249,7 +247,7 @@ class Asteroid {
         if (this.image.x < 0 - this.image.getBounds().width) {
             this.reset(Math.floor((Math.random() * 3) + 1));
         }
-        
+
     }
 }
 
@@ -335,27 +333,30 @@ function distance(point1: createjs.Point, point2: createjs.Point): number {
 // Check Collision with Plane and Island
 function checkLaserCollision() {
     //if (hasShot) {
-        var p1: createjs.Point = new createjs.Point();
-        var p2: createjs.Point = new createjs.Point();
-        
+    var p1: createjs.Point = new createjs.Point();
+    var p2: createjs.Point = new createjs.Point();
+
     for (var i = 0; i < LASER_NUM; i++) {
         if (laser[i] != null) {
-                p1.x = laser[i].laserBeam.x;
-                p1.y = laser[i].laserBeam.y;
-                for (var count = 1; count < ASTEROID_NUM; count++) {
-                    if (asteroids[count] != null) {
-                        p2.x = asteroids[count].image.x;
-                        p2.y = asteroids[count].image.y;
+            p1.x = laser[i].laserBeam.x;
+            p1.y = laser[i].laserBeam.y;
+            for (var count = 1; count < ASTEROID_NUM; count++) {
+                if (asteroids[count] != null) {
+                    p2.x = asteroids[count].image.x;
+                    p2.y = asteroids[count].image.y;
 
-                        if (!(laser[i].laserBeam.x >= asteroids[count].image.x + asteroids[count].width
-                            || laser[i].laserBeam.x + laser[i].width <= asteroids[count].image.x
-                            || laser[i].laserBeam.y >= asteroids[count].image.y + asteroids[count].height
-                            || laser[i].laserBeam.y + laser[i].height <= asteroids[count].image.y)) {
+                    if (!(laser[i].laserBeam.x >= asteroids[count].image.x + asteroids[count].width
+                        || laser[i].laserBeam.x + laser[i].width <= asteroids[count].image.x
+                        || laser[i].laserBeam.y >= asteroids[count].image.y + asteroids[count].height
+                        || laser[i].laserBeam.y + laser[i].height <= asteroids[count].image.y) &&
+                        laser[i].laserBeam.x < stage.canvas.width - laser[i].width) {
 
-                            scoreboard.score += ADD_SCORE;
-                            asteroids[count].reset();
-                            stage.removeChild(laser[i].laserBeam);
-                            
+                        scoreboard.score += ADD_SCORE;
+                        asteroids[count].reset();
+                        laser[i].laserBeam.x = 2000;
+                        stage.removeChild(laser[i].laserBeam);
+                        stage.removeChild(laser[i]);
+
                     }
                 }
             }
@@ -374,11 +375,11 @@ function checkasteroid(aAsteroid: Asteroid) {
     p2.x = aAsteroid.image.x;
     p2.y = aAsteroid.image.y;
 
-    //if (distance(p2, p1) < ((spaceship.height * 0.5) + (aAsteroid.height * 0.5))) {
-    if(!(spaceship.image.x >= aAsteroid.image.x + aAsteroid.width
-    || spaceship.image.x + spaceship.width <= aAsteroid.image.x
-    || spaceship.image.y >= aAsteroid.image.y + aAsteroid.height
-    || spaceship.image.y + spaceship.height <= aAsteroid.image.y)) {
+    if (distance(p2, p1) < ((spaceship.height * 0.5) + (aAsteroid.height * 0.5))) {
+        /*if(!(spaceship.image.x >= aAsteroid.image.x + aAsteroid.width
+        || spaceship.image.x + spaceship.width <= aAsteroid.image.x
+        || spaceship.image.y >= aAsteroid.image.y + aAsteroid.height
+        || spaceship.image.y + spaceship.height <= aAsteroid.image.y)) {*/
         scoreboard.lives -= 1;
         aAsteroid.reset(Math.floor((Math.random() * 3) + 1));
     }
