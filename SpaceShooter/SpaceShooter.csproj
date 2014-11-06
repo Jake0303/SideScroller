@@ -64,8 +64,13 @@
     <Content Include="images\asteroid3.png" />
     <Content Include="images\cloud.png" />
     <Content Include="images\island.png" />
+    <Content Include="images\lasershot.png" />
     <Content Include="images\ocean.gif" />
     <Content Include="images\plane.png" />
+    <Content Include="images\Spaceship.png" />
+    <Content Include="images\Thrusteranim1.png" />
+    <Content Include="images\Thrusteranim2.png" />
+    <Content Include="images\Thrusteranim3.png" />
     <Content Include="sounds\yay.ogg" />
     <Content Include="sounds\engine.ogg" />
     <Content Include="sounds\thunder.ogg" />
