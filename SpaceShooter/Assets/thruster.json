@@ -1,0 +1,14 @@
+{
+images: ["thruster.png"],
+frames: [
+
+    [2, 2, 30, 12], 
+    [34, 2, 30, 12], 
+    [66, 2, 30, 12], 
+    [98, 2, 30, 12]
+],
+animations: {
+    
+        thrusterAnim:[0,3,"thrusteranim",0.5] 
+        }
+}
