@@ -13,3 +13,5 @@
 /// <reference path="lib/r.js" />
 /// <reference path="lib/preloadjs-0.4.1.min.js" />
 /// <reference path="lib/jquery-2.1.1.min.js" />
+/// <reference path="Constants.js" />
+/// <reference path="state.js" />

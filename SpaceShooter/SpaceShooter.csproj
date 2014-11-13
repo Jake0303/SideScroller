@@ -62,24 +62,29 @@
     <Content Include="Assets\explosion.png" />
     <Content Include="Assets\images.png" />
     <Content Include="Assets\thruster.png" />
+    <Content Include="css\main.css" />
     <Content Include="images\asteroid1.png" />
     <Content Include="images\asteroid2.png" />
     <Content Include="images\asteroid3.png" />
-    <Content Include="images\cloud.png" />
-    <Content Include="images\island.png" />
+    <Content Include="images\backbutton.png" />
+    <Content Include="images\gamelogo.png" />
+    <Content Include="images\instructionbutton.png" />
     <Content Include="images\lasershot.png" />
-    <Content Include="images\ocean.gif" />
-    <Content Include="images\plane.png" />
+    <Content Include="images\playbutton.png" />
     <Content Include="images\Spaceship.png" />
     <Content Include="images\Thrusteranim1.png" />
     <Content Include="images\Thrusteranim2.png" />
     <Content Include="images\Thrusteranim3.png" />
+    <Content Include="Scripts\Constants.js" />
+    <Content Include="Scripts\State.js" />
     <Content Include="sounds\yay.ogg" />
     <Content Include="sounds\engine.ogg" />
     <Content Include="sounds\thunder.ogg" />
     <Content Include="Assets\images.json" />
     <Content Include="Assets\thruster.json" />
     <Content Include="Assets\explosion.json" />
+    <Content Include="Scripts\Constants.js.map" />
+    <Content Include="Scripts\State.js.map" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -90,7 +95,6 @@
   <ItemGroup>
     <Content Include="css\app.css" />
     <Content Include="css\normalize.css" />
-    <Content Include="images\loading.jpg" />
     <Content Include="index.html" />
     <Content Include="packages.config" />
     <None Include="Scripts\lib\jquery-2.1.1.intellisense.js" />
@@ -118,12 +122,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <TypeScriptCompile Include="Scripts\Constants.ts" />
     <TypeScriptCompile Include="Scripts\lib\createjs-lib.d.ts" />
     <TypeScriptCompile Include="Scripts\lib\easeljs.d.ts" />
     <TypeScriptCompile Include="Scripts\game.ts" />
     <TypeScriptCompile Include="Scripts\lib\preloadjs.d.ts" />
     <TypeScriptCompile Include="Scripts\lib\soundjs.d.ts" />
     <TypeScriptCompile Include="Scripts\lib\tweenjs.d.ts" />
+    <TypeScriptCompile Include="Scripts\State.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
