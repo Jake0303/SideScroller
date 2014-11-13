@@ -553,9 +553,9 @@ function gameStart() {
         State.MAINMENU = true;
         scoreboard.lives = Constants.PLAYER_LIVES;
         if (scoreboard.score > 6000) {
-            instructionText = new createjs.Text("Fantastic score!", Constants.GAME_FONT, Constants.FONT_COLOUR);
+            instructionText = new createjs.Text("Fantastic score!" + "\n You got: " + scoreboard.score + " points", Constants.GAME_FONT, Constants.FONT_COLOUR);
         } else {
-            instructionText = new createjs.Text("You could do better!", Constants.GAME_FONT, Constants.FONT_COLOUR);
+            instructionText = new createjs.Text("You could do better!" + "\n You got: " + scoreboard.score + " points", Constants.GAME_FONT, Constants.FONT_COLOUR);
         }
         instructionText.lineWidth = 550;
         instructionText.lineHeight = 40;
